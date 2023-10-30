@@ -9,21 +9,21 @@ import pandas as p
 import plotly.express as px
 from pandas.api.types import is_numeric_dtype
 import matplotlib.pyplot as plt
-import logitRegression
+import logitRegression as l
 
 "extracts data from csv"
 def data_processing(filename):
 
     dataframe = p.read_csv(filename)
-    print(dataframe)
+    #print(dataframe)
 
     """Main STATISTICS"""
-    print(dataframe.head())
-    print(dataframe.size)
-    print(dataframe.var)
-    print(dataframe.cumsum)
-    print(dataframe.cumprod)
-    print(dataframe.describe())
+    #print(dataframe.head())
+    #print(dataframe.size)
+    #print(dataframe.var)
+    #print(dataframe.cumsum)
+    #print(dataframe.cumprod)
+    #print(dataframe.describe())
     """5 VISUALIZATIONS MATLIB"""
 
     # sum of missing entries in dataset
@@ -107,8 +107,10 @@ def linear_regression(filename):
 
     #MSE = (1/len(y_test.index)) * sum(y_test.index.map(lambda i: (y_test.loc[i] - (w.transpose().dot(x_test.loc[i])))**2))
     MSE = sum/len(y_test.index)
-    print("MSE IS EQUAL TO")
-    print(MSE)
+    #print("MSE IS EQUAL TO")
+    #print(MSE)
+    #print("Weight is the following:")
+    #print(w)
 
     # predicted dataframe
 
@@ -120,6 +122,9 @@ def linear_regression(filename):
     plt.title("actual vs calculated")
     ydata = y
     plt.scatter(xdata, ydata)
+    plt.ylabel = ""
+    plt.xlabel = ""
+    plt.legend(['actual', ' calculated'])
     plt.show()
     return MSE
 
@@ -132,24 +137,27 @@ def logistic_regression(filename):
             d[key] = (d[key] - d[key].min()) / (d[key].max() - d[key].min())
         else:
             d[key] = d[key].astype('category')
+            d[key] = p.factorize(d[key])[0]
+            d[key] = (d[key] - d[key].min()) / (d[key].max() - d[key].min())
        # if d.dtypes[columnName]
-    print(d)
+
+    #print(d)
     """5 VISUALIZATIONS MATLIB"""
 
     # fig = px.scatter(d, x='bill_length_mm', y='flipper_length_mm', trendline="ols", trendline_color_override="red",
-    #                  title="sex vs island")
+    #                  title="bill_length_mm' vs flipper_length_mm")
     # fig.show()
-    # fig = px.scatter(d, x='bill_length_mm', y='body_mass_g', trendline="ols", trendline_color_override="red",
-    #                  title="sex vs bill length mm")
+    # fig = px.scatter(d, x='flipper_length_mm', y='body_mass_g', trendline="ols", trendline_color_override="red",
+    #                  title="flipper_length_mm vs body_mass_g")
     # fig.show()
     # fig = px.scatter(d, x='bill_depth_mm', y='body_mass_g', trendline="ols", trendline_color_override="red",
-    #                  title="sex vs bill depth mm")
+    #                  title="bill_length_mm vs  body_mass_g ")
     # fig.show()
     # fig = px.scatter(d, x='flipper_length_mm', y='bill_depth_mm', trendline="ols", trendline_color_override="red",
-    #                  title="sex vs flipper length mm")
+    #                  title="flipper_length_mm vs bill_depth_mm")
     # fig.show()
     # fig = px.scatter(d, x='body_mass_g', y='bill_depth_mm', trendline="ols", trendline_color_override="red",
-    #                  title="sex vs body mass g")
+    #                  title="body_mass_g vs bill_depth_mm")
     # fig.show()
 
     """target Y: Gender"""
@@ -163,14 +171,14 @@ def logistic_regression(filename):
     x_train = train.drop(columns='sex')
     x_test = test.drop(columns='sex')
 
-    learning_rate = 1e-6
+    learning_rate = 1
     iterations = 100000
-    model = logitRegression.LogitRegression(learning_rate, iterations)
+    model = l.LogitRegression(learning_rate, iterations)
     model.fit(x_train, y_train)
-    predict = model.predict(x_test,y_test)
+    predict = model.predict(x_test, y_test)
     print("logitRegression accuracy:")
     print(predict)
-    return
+    return predict
 
 
 
@@ -178,6 +186,6 @@ def logistic_regression(filename):
 # Press the green button in the gutter to run the script.
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
-
+"""comment here"""
 #linear_regression("data\winequality-red.csv")
 logistic_regression(("data\penguins.csv"))

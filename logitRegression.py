@@ -1,45 +1,43 @@
-import numpy
+import pandas as pd
+import numpy as np
+
 class LogitRegression:
-    def __init__(self,learning_rate: int, iterations: int):
+    def __init__(self, learning_rate: int,  num_iterations: int):
         self.learning_rate = learning_rate
-        self.iterations = iterations
-        return
-    def fit(self, x_train, y_train):
-        #initialize weights
-        weights = numpy.random.uniform(0, 1)
+        self.num_iterations = num_iterations
+        self.theta = None
 
-        c = 0
-        for i in range(self.iterations):
-            #call gradient descent function
-            weights = self.gradient_descent(weights,  x_train, y_train)
-            #calculate cost
-            print(self.cost(weights, x_test, y_test))
+    def sigmoid(self, z):
+        return 1 / (1 + np.exp(-z))
 
+    def cost_function(self, y, y_pred):
+        m = len(y)
+        return (-1 / m) * np.sum(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
 
-        return
-    def sigmoid(self):
-        return
-    def gradient_descent(self,weights, x_train, y_train ):
-        result = 0
-        for index, row in x_train.iterrows():
-            weights
-        return -result * self.learning_rate
-    def cost(self, weight, x_train, y_train):
-        y=[]
-        sum = 0
-        for index, row in x_train.iterrows():
-            calc = weight(row)
-            y.append(calc)
-        for i in range(0,len(y_train)):
-            sum += y_train[i] - y[i]
+    def fit(self, X, y):
+        m, n = X.shape
+        self.theta = np.zeros(n)
+        for i in range(n):
+            self.theta[i] =  np.random.uniform(0, 1)
 
-        cost = sum/len(y_train)
-        return cost
+        for _ in range(self.num_iterations):
+            z = np.dot(X, self.theta)
+            y_pred = self.sigmoid(z)
+            gradient = np.dot(X.T, (y_pred - y)) / m
+            print(self.cost_function(y, y_pred))
+            self.theta -= self.learning_rate * gradient
 
-
-    def predict(self,x_test,y_test):
-        return
-
-
-
-
+    def predict(self, X, y):
+        z = np.dot(X, self.theta)
+        y_pred = self.sigmoid(z)
+        y_calc = []
+        for i in y_pred:
+            if i >= 0.5:
+                y_calc.append(1)
+            else:
+                y_calc.append(0)
+        res = 0
+        for index in range(len(y_calc)):
+            if y.iloc[index] == y_calc[index]:
+                res += 1
+        return res/len(y_calc)
