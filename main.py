@@ -18,12 +18,12 @@ def data_processing(filename):
     #print(dataframe)
 
     """Main STATISTICS"""
-    #print(dataframe.head())
-    #print(dataframe.size)
-    #print(dataframe.var)
-    #print(dataframe.cumsum)
-    #print(dataframe.cumprod)
-    #print(dataframe.describe())
+    print(dataframe.head())
+    print(dataframe.size)
+    print(dataframe.var)
+    print(dataframe.cumsum)
+    print(dataframe.cumprod)
+    print(dataframe.describe())
     """5 VISUALIZATIONS MATLIB"""
 
     # sum of missing entries in dataset
@@ -71,17 +71,17 @@ def linear_regression(filename):
 
 
     """PRINT THE SHAPE OF YOUR X_TRAIN Y_TRAIN X_TEST Y_TEST"""
-    #print("y_train")
-    #print(y_train)
+    print("y_train")
+    print(y_train)
 
-    #print("y_test")
-    #print(y_test)
+    print("y_test")
+    print(y_test)
 
-    #print("x_train")
-    #print(x_train)
+    print("x_train")
+    print(x_train)
 
-    #print("x_test")
-    #print(x_test)
+    print("x_test")
+    print(x_test)
 
     # solve linear regression problem
 
@@ -107,10 +107,10 @@ def linear_regression(filename):
 
     #MSE = (1/len(y_test.index)) * sum(y_test.index.map(lambda i: (y_test.loc[i] - (w.transpose().dot(x_test.loc[i])))**2))
     MSE = sum/len(y_test.index)
-    #print("MSE IS EQUAL TO")
-    #print(MSE)
-    #print("Weight is the following:")
-    #print(w)
+    print("MSE IS EQUAL TO")
+    print(MSE)
+    print("Weight is the following:")
+    print(w)
 
     # predicted dataframe
 
@@ -133,32 +133,34 @@ def logistic_regression(filename):
     d = data_processing(filename)
     """normailize + change into categorical feature"""
     for key, value in d.items():
-        if is_numeric_dtype(d[key]):
-            d[key] = (d[key] - d[key].min()) / (d[key].max() - d[key].min())
-        else:
+        if is_numeric_dtype(d[key])==False:
             d[key] = d[key].astype('category')
             d[key] = p.factorize(d[key])[0]
-            d[key] = (d[key] - d[key].min()) / (d[key].max() - d[key].min())
+
+            #X_normalized = -1 + (X - self.feature_min) * (2 / (self.feature_max - self.feature_min))
+            #d[key] = -1 +(d[key] - d[key].min()) *2/ (d[key].max() - d[key].min())
+
        # if d.dtypes[columnName]
 
+    d = (d - d.min()) / (d.max() - d.min())
     #print(d)
     """5 VISUALIZATIONS MATLIB"""
 
-    # fig = px.scatter(d, x='bill_length_mm', y='flipper_length_mm', trendline="ols", trendline_color_override="red",
-    #                  title="bill_length_mm' vs flipper_length_mm")
-    # fig.show()
-    # fig = px.scatter(d, x='flipper_length_mm', y='body_mass_g', trendline="ols", trendline_color_override="red",
-    #                  title="flipper_length_mm vs body_mass_g")
-    # fig.show()
-    # fig = px.scatter(d, x='bill_depth_mm', y='body_mass_g', trendline="ols", trendline_color_override="red",
-    #                  title="bill_length_mm vs  body_mass_g ")
-    # fig.show()
-    # fig = px.scatter(d, x='flipper_length_mm', y='bill_depth_mm', trendline="ols", trendline_color_override="red",
-    #                  title="flipper_length_mm vs bill_depth_mm")
-    # fig.show()
-    # fig = px.scatter(d, x='body_mass_g', y='bill_depth_mm', trendline="ols", trendline_color_override="red",
-    #                  title="body_mass_g vs bill_depth_mm")
-    # fig.show()
+    fig = px.scatter(d, x='bill_length_mm', y='flipper_length_mm', trendline="ols", trendline_color_override="red",
+                     title="bill_length_mm' vs flipper_length_mm")
+    fig.show()
+    fig = px.scatter(d, x='flipper_length_mm', y='body_mass_g', trendline="ols", trendline_color_override="red",
+                     title="flipper_length_mm vs body_mass_g")
+    fig.show()
+    fig = px.scatter(d, x='bill_depth_mm', y='body_mass_g', trendline="ols", trendline_color_override="red",
+                     title="bill_length_mm vs  body_mass_g ")
+    fig.show()
+    fig = px.scatter(d, x='flipper_length_mm', y='bill_depth_mm', trendline="ols", trendline_color_override="red",
+                     title="flipper_length_mm vs bill_depth_mm")
+    fig.show()
+    fig = px.scatter(d, x='body_mass_g', y='bill_depth_mm', trendline="ols", trendline_color_override="red",
+                     title="body_mass_g vs bill_depth_mm")
+    fig.show()
 
     """target Y: Gender"""
     """divide into training and test"""
@@ -170,14 +172,32 @@ def logistic_regression(filename):
     y_test = test['sex']
     x_train = train.drop(columns='sex')
     x_test = test.drop(columns='sex')
+    print("y_train")
+    print(y_train)
 
-    learning_rate = 1
-    iterations = 100000
+    print("y_test")
+    print(y_test)
+
+    print("x_train")
+    print(x_train)
+
+    print("x_test")
+    print(x_test)
+
+    learning_rate = 0.01
+    iterations = 1000
+    # .01 1000 65%-73%
+    # 1 10000 64 -65
+    # 1e-4 100000 .73
     model = l.LogitRegression(learning_rate, iterations)
     model.fit(x_train, y_train)
     predict = model.predict(x_test, y_test)
-    print("logitRegression accuracy:")
-    print(predict)
+    print ('loss values over time',list(reversed(model.cost)))
+    plt.title("loss function: iterations vs loss")
+    plt.plot(list(reversed(model.cost)))
+    print("logitRegression accuracy:",predict)
+    print("final weight", model.theta)
+    plt.show()
     return predict
 
 
